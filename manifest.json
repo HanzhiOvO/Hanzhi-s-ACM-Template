@@ -1,0 +1,20 @@
+{
+  "edition": "字体优化最终版",
+  "files": [
+    "README-打印与赛时使用.md",
+    "assets/cover-original.pdf",
+    "build_final_pdf.py",
+    "manifest.json",
+    "markdown/00-赛时使用说明.md",
+    "markdown/A-A 赛场入口与基础算法.md",
+    "markdown/B-B 数据结构与离线维护.md",
+    "markdown/C-C 树、图论与网络流.md",
+    "markdown/D-D 字符串与序列.md",
+    "markdown/E-E 数学、数论、几何与多项式.md",
+    "markdown/F-F 动态规划与状态优化.md",
+    "markdown/G-G 交互、博弈、杂项与近期模型.md",
+    "一只奶龙-XCPC-2026-算法模板-字体优化最终打印版.md",
+    "一只奶龙-XCPC-2026-算法模板-字体优化最终打印版.pdf",
+    "最终审查记录.md"
+  ]
+}
