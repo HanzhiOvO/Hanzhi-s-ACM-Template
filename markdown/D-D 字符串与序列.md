@@ -485,11 +485,11 @@ optional<string> shortest_missing_subsequence(
 题目：插入若干字符串，询问某个前缀出现过多少次、某个完整单词出现过几次。
 
 ```cpp
-Trie trie;
-trie.insert("apple");                       // 1. 插入字符串（可重复）
-trie.insert("apply");
-int pref = trie.count_prefix("app");        // 2. 以 "app" 为前缀的字符串数
-int exact = trie.count_word("apple");       // 3. 完整单词 "apple" 出现次数
+Trie trie2;                              // 注：与下方「不会用就照抄」的 trie 区分开
+trie2.insert("apple");                   // 1. 插入字符串（可重复）
+trie2.insert("apply");
+int pref = trie2.count_prefix("app");    // 2. 以 "app" 为前缀的字符串数
+int exact = trie2.count_word("apple");   // 3. 完整单词 "apple" 出现次数
 cout << pref << ' ' << exact << '\n';
 ```
 
@@ -964,6 +964,8 @@ struct PatternOccurrenceAC {
 
 **最小完整示例（先抄这一段就能跑）：**
 
+- 依赖：骨架常量 `modn`（「通用头文件与主函数」节定义，作 `covered_intervals_by_occurrences` 的缺省模数），抄板时一起抄上。
+
 题目：给权值数组与模式串的所有出现起点，统计所有“包含至少一次该模式”的区间的最大权值和与总权值和（模 mod）。
 
 ```cpp
@@ -1056,6 +1058,8 @@ CoveredIntervalStats covered_intervals_by_occurrences(
 题目：长度 `len` 的字符串只用 `'a'..'a'+sigma-1` 组成，求不含任何禁串的字符串数量（模 modn）。
 
 ```cpp
+vector<string> patterns = {"ab"};   // 样例输入：禁串列表（非空小写串）
+int len = 2, sigma = 2;             // 样例输入：目标长度、字符集大小
 ACAvoidPatterns ac;
 for (auto& s : patterns) ac.insert(s);    // 1. 插入所有禁串（非空小写串）
 ac.build();                               // 2. 全部插入后 build 一次
@@ -1250,6 +1254,9 @@ struct DoubleHash {
 题目：`n x m` 字符网格，多次判断两个同尺寸子矩形是否完全相同。
 
 ```cpp
+vector<string> grid = {"ab", "ab"};        // 样例输入：2x2 字符网格
+int x1 = 0, y1 = 0, x2 = 1, y2 = 1;        // 样例输入：第一块矩形 [0,1) x [0,1)
+int a1 = 0, b1 = 1, a2 = 1, b2 = 2;        // 样例输入：第二块矩形 [0,1) x [1,2)
 DoubleHash2D h(grid);                          // 1. 结构体定义：DoubleHash2D(字符网格)
 if (h.get(x1, y1, x2, y2) == h.get(a1, b1, a2, b2))  // 2. 调用：比较两块矩形
     cout << "same" << '\n';
@@ -1399,6 +1406,8 @@ private:
 
 
 **最小完整示例（先抄这一段就能跑）：**
+
+- 依赖：上一节「双模二维滚动哈希」的 `struct DoubleHash2D` / `struct Hash2DValue`（`find_2d_pattern` 内部使用），抄板时一起抄上。
 
 题目：在 `n x m` 字符网格中找出 `h x w` 图案的全部出现位置（左上角）。
 

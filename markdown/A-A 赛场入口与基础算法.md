@@ -104,11 +104,11 @@ dbg(x);   // 本地打印 "x = 值" 到 stderr；提交（未定义 LOCAL）时�
 
 ```cpp
 // 输入规模几百万的整数，求和后输出。
-FastScanner fs;
+FastScanner fs2;                 // 注：与下方「不会用就照抄」的 fs 区分开
 int n;
-fs.read_int(n);
-i64 sum = 0, x;
-while (n--) { fs.read_int(x); sum += x; }
+fs2.read_int(n);
+i64 sum = 0, x2;
+while (n--) { fs2.read_int(x2); sum += x2; }
 cout << sum << '\n';
 ```
 
@@ -483,6 +483,7 @@ struct Frac {
 
 ```cpp
 // 求 2^100 mod 1e9+7，以及 3 在模 1e9+7 下的逆元。
+const int mod7 = 1e9 + 7;   // 骨架常量 mod7（1e9+7），这里内联一份方便单独抄这段
 cout << mod_pow(2, 100, mod7) << '\n';        // 976371285
 cout << mod_pow(3, mod7 - 2, mod7) << '\n';   // 333333336
 ```
@@ -1130,6 +1131,7 @@ i64 count_subarrays_with_xor(const vector<ui64>& a, ui64 target) {
 
 ```cpp
 // a = {1, 6, 8, 12}，静态查询区间 OR 与区间 AND。
+vector<ui64> a = {1, 6, 8, 12};   // 样例输入：0-indexed 数组
 BitwiseSparseTable st(a);
 cout << st.query_or(1, 3) << '\n';   // 6|8|12 = 14
 cout << st.query_and(0, 2) << '\n';  // 1&6&8 = 0
@@ -1400,6 +1402,8 @@ i64 count_distinct_subarray_and(const vector<ui64>& a) {
 
 **最小完整示例（先抄这一段就能跑）：**
 
+- 依赖：本节上方「`i128` 输入输出」节的 `operator<<` 重载（`i128` 不能直接用 `cout` 输出），抄板时一起抄上。
+
 ```cpp
 // a = {1, 2, 3}，求所有无序数对的 XOR / OR / AND 总和。
 vector<ui64> a = {1, 2, 3};
@@ -1456,8 +1460,11 @@ PairwiseBitwiseSums sum_pairwise_bitwise(const vector<ui64>& a) {
 
 **最小完整示例（先抄这一段就能跑）：**
 
+- 依赖：E 章「FWT：AND / OR 卷积」节的 `or_convolution`（含 `fwt_or` 等底层），抄板时一起抄上。
+
 ```cpp
 // 两集合掩码频率 a、b，问任选一个掩码后 OR 恰为 S 的有序对数量（E 章 11 抄 or_convolution）。
+const i64 MOD = 998244353;              // 模数（NTT 常用模）
 int m = 3;                      // 掩码位数，数组长度 2^m
 vector<i64> a(1 << m, 0), b(1 << m, 0);
 a[1] = 2; b[2] = 1;             // 填频率：掩码 1 出现 2 次、掩码 2 出现 1 次
@@ -1731,7 +1738,7 @@ cout << can_pick_on_circle({0, 4, 8}, 12, 3, 5) << '\n';  // 0（8 绕回 0 只�
 
 - `can_pick_on_line(x, k, d)`：`x`（`vector<i64>` 候选点，函数内会排序，可传任意顺序）、`k`（要选的点数）、`d`（最小间距）；返回 `bool`，从左到右贪心能选够 `k` 个即 true。
 - `can_pick_on_circle(p, circumference, k, d)`：`p`（圆上点坐标，`0 <= p[i] < circumference`）、`circumference`（周长）、`k`、`d`；返回 `bool`；`k <= 1` 时只要 `n >= k`，`d == 0` 时直接 true。
-- 求最大可行间距：外层对 `d` 二分，如 `max_true(0, 上界, [&](i64 d){ return can_pick_on_line(x, k, d); })`。
+- 求最大可行间距：外层对 `d` 二分，如 `max_true(0, 上界， [&](i64 d){ return can_pick_on_line(x, k, d); })`。
 
 
 **改板时先认这几个量：**
@@ -2243,7 +2250,7 @@ i64 schedule_with_deadline(vector<pair<int, int>> jobs) {
 
 **最小完整示例（先抄这一段就能跑）：**
 
-题目：容量 `50`，物品（重量, 价值, id）为 `(10,100,0),(30,120,1),(20,40,2)`，求最大总价值与每件取多少。
+题目：容量 `50`，物品（重量， 价值， id）为 `(10,100,0),(30,120,1),(20,40,2)`，求最大总价值与每件取多少。
 
 ```cpp
 FractionalKnapsackResult res =

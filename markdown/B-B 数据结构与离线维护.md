@@ -420,6 +420,10 @@ int josephus_survivor(int n, int step) {
 题目：`n` 个位置初始都未涂色；每次把区间 `[l,r]` 中还没涂色的位置涂成颜色 `c`，每个位置只涂一次。
 
 ```cpp
+int n = 6;                                 // 样例输入，抄题时换成你的输入
+int l = 2, r = 5;                          // 样例输入，抄题时换成你的输入
+int c = 1;                                 // 样例输入，抄题时换成你的输入
+vector<int> color(n + 1, 0);               // 样例输入，抄题时换成你的输入
 SuccessorDSU dsu(n);                       // 1. 结构体定义：n 个位置，编号 1..n
 for (int x = dsu.first_alive(l); x <= r; x = dsu.erase_and_next(x)) {
     color[x] = c;                          // 2. 调用：涂色后删除，x 跳到下一个未处理位置
@@ -495,10 +499,13 @@ struct SuccessorDSU {
 题目：`n` 个点、`m` 条边按顺序加入，过程中要回到某个历史状态再继续加边（离线动态连通性）。
 
 ```cpp
+int n = 3;                            // 样例输入，抄题时换成你的输入
+int u = 1, v = 2;                     // 样例输入，抄题时换成你的输入
+int x = 1, y = 3;                     // 样例输入，抄题时换成你的输入
 RollbackDSU dsu(n);                  // 1. 结构体定义：n 个点，编号 1..n
 int snap = dsu.snapshot();           // 2. 调用：记录当前历史长度，返回快照编号
 dsu.unite(u, v);                     // 3. 调用：合并 u、v 所在集合
-bool ok = dsu.same(x, y);            // 4. 调用：判断 x、y 是否同一集合
+bool ok = dsu.find(x) == dsu.find(y); // 4. 调用：判断 x、y 是否同一集合（无 same 成员，用 find 比较）
 dsu.rollback(snap);                  // 5. 调用：撤销 snap 之后的所有合并
 ```
 
@@ -593,6 +600,9 @@ struct RollbackDSU {
 题目：`n` 个变量，`q` 条约束 `value[y] - value[x] = w`，判断约束是否矛盾。
 
 ```cpp
+int n = 3;                            // 样例输入，抄题时换成你的输入
+int x = 1, y = 3;                     // 样例输入，抄题时换成你的输入
+i64 w = 7;                            // 样例输入，抄题时换成你的输入
 WeightedDSU dsu(n);                  // 1. 结构体定义：n 个变量，编号 1..n
 bool ok = dsu.unite(x, y, w);        // 2. 调用：加约束 value[y]-value[x]=w；与已知矛盾返回 false
 i64 d = dsu.difference(x, y);        // 3. 调用：同一集合时返回 value[y]-value[x]
@@ -777,6 +787,9 @@ int count_contradictions(int n, const vector<tuple<int, int, i64>>& statements) 
 题目：食物链：`n` 个动物，`q` 句话。`1 x y` 表示同类，`2 x y` 表示 `x` 吃 `y`；统计与前面已确认信息矛盾的假话数。
 
 ```cpp
+int n = 3;                            // 样例输入，抄题时换成你的输入
+int x = 1, y = 2, r = 1;              // 样例输入，抄题时换成你的输入
+int bad = 0;                          // 样例输入，抄题时换成你的输入
 ModDSU dsu(n);                       // 1. 结构体定义：n 个动物，编号 1..n
 bool ok = dsu.unite(x, y, r);        // 2. 调用：加约束 x->y 关系为 r（0=同类，1=吃）
 if (!ok) bad++;                      // 3. 统计：与已知信息矛盾，记为假话
@@ -980,6 +993,8 @@ struct Fenwick {
 **最小完整示例（先抄这一段就能跑）：**
 
 题目：`n` 个数，求 `i<j` 且 `a[i]>a[j]` 的逆序对总数。
+
+依赖：树状数组：单点加，区间和 节的 Fenwick 模板，抄板时一起抄上。
 
 ```cpp
 vector<int> a = {3, 1, 4, 2};        // 1. 数据：原数组（0-indexed，值域任意）
@@ -1418,11 +1433,14 @@ vector<int> mo_distinct_count(vector<int> a, vector<MoQueryBasic> qs) {
 题目：`n` 个数。`1 l r` 询问 `[l,r]` 内不同数字个数；`2 p x` 把 `a[p]` 改成 `x`。所有修改和询问先给出（离线），按题实现 `add_value/remove_value/current_answer` 后调用。
 
 ```cpp
+vector<int> a = {0, 1, 2, 1, 3, 2};             // 样例输入，抄题时换成你的输入（1-indexed）
 // 先按题目实现：add_value(x) 加一个数、remove_value(x) 删一个数、current_answer() 返回当前答案
 vector<MoQueryUpdate> qs;                       // 收集询问 {l, r, t, id}：t = 之前已发生的修改数
+qs.push_back({1, 3, 0, 0});                     // 样例询问：[1,3] 的不同数，t=0（还没修改）
 vector<Modification> mods;                      // 收集修改 {pos, old_value, new_value}（旧值需记录）
+mods.push_back({2, 2, 5});                      // 样例修改：把 a[2] 从 2 改成 5
 vector<i64> ans = mo_with_updates(a, qs, mods); // 调用：a 必须 1-indexed
-for (int i = 0; i < q; ++i) cout << ans[i] << '\n';
+for (int i = 0; i < (int)ans.size(); ++i) cout << ans[i] << '\n';  // 按询问 id 输出
 ```
 
 样例：`a=[1,2,1,3,2]`，先改 `a[2]=9`；问 `[1,3]` -> 2；`[2,5]` -> 4。
@@ -1667,6 +1685,9 @@ struct TreeMo {
 题目：`n` 个数，`q` 次操作。`op=1 pos val`：把 `a[pos]` 改成 `val`；`op=2 l r`：输出闭区间 `[l,r]` 的最大值。
 
 ```cpp
+int n = 5;                                 // 样例输入，抄题时换成你的输入
+vector<i64> a = {0, 1, 2, 3, 4, 5};        // 样例输入，抄题时换成你的输入
+int op = 2, l = 1, r = 5;                  // 样例输入，抄题时换成你的输入
 SegPointMax seg(n);
 seg.build(a);                                  // 建树：a 必须 1-indexed（长度 n+1）
 if (op == 1) { int pos; i64 val; cin >> pos >> val; seg.modify(pos, val); }  // 单点改值
@@ -1768,6 +1789,9 @@ struct SegPointMax {
 题目：`n` 个数，`q` 次操作。`op=1 pos val`：把 `a[pos]` 赋成 `val`；`op=2 l r`：输出闭区间 `[l,r]` 内非空连续子段的最大和。
 
 ```cpp
+int n = 9;                                 // 样例输入，抄题时换成你的输入
+vector<i64> a = {0, -2, 1, -3, 4, -1, 2, 1, -5, 4};   // 样例输入，抄题时换成你的输入
+int op = 2, l = 1, r = 9;                  // 样例输入，抄题时换成你的输入
 SegMaxSubarray seg(n);
 seg.build(a);                                  // 建树：a 必须 1-indexed（长度 n+1）
 if (op == 1) { int pos; i64 val; cin >> pos >> val; seg.point_assign(pos, val); }  // 单点赋值
@@ -2059,6 +2083,9 @@ struct SegLazy {
 题目：`n` 个数，`q` 次操作。`op=1 l r x`：把 `a[l..r]` 全部赋成 `x`；`op=2 l r`：输出闭区间和。
 
 ```cpp
+int n = 5;                                 // 样例输入，抄题时换成你的输入
+vector<i64> a = {0, 1, 2, 3, 4, 5};        // 样例输入，抄题时换成你的输入
+int op = 2, l = 1, r = 5;                  // 样例输入，抄题时换成你的输入
 SegRangeAssignSum seg(n);
 seg.build(a);                                  // 建树：a 必须 1-indexed（长度 n+1）
 if (op == 1) { i64 x; cin >> x; seg.range_assign(l, r, x); }  // 区间赋值
@@ -2186,6 +2213,9 @@ struct SegRangeAssignSum {
 题目：`n` 个数（模 `MOD`），`q` 次操作。`op=1 l r mul add`：`a[l..r]` 每个数先乘 `mul` 再加 `add`；`op=2 l r`：输出闭区间和 mod `MOD`。
 
 ```cpp
+vector<i64> a = {0, 1, 2, 3, 4, 5};            // 样例输入，抄题时换成你的输入
+i64 MOD = 998244353;                           // 样例输入，抄题时换成你的输入
+int op = 2, l = 1, r = 5;                      // 样例输入，抄题时换成你的输入
 AffineSegTree seg(a, MOD);                     // 构造即建树：a 必须 1-indexed（长度 n+1）
 if (op == 1) { i64 mul, add; cin >> mul >> add; seg.range_apply(l, r, mul, add); }  // 区间仿射变换
 else cout << seg.range_sum(l, r) << '\n';                                              // 区间和
@@ -2304,6 +2334,8 @@ struct AffineSegTree {
 题目：`n` 段初始全为颜色 1，`q` 次操作。`op=1 l r c`：把 `[l,r]` 全部染成颜色 `c`；`op=2 l r`：输出 `[l,r]` 内的颜色种类数。
 
 ```cpp
+int n = 5;                                     // 样例输入，抄题时换成你的输入
+int op = 2, l = 1, r = 5;                      // 样例输入，抄题时换成你的输入
 ColorSegTree seg(n);                           // 初始整段颜色为 1
 if (op == 1) { int c; cin >> c; seg.range_assign(l, r, c); }   // 区间染色
 else cout << seg.query_count(l, r) << '\n';                     // 颜色种类数
@@ -2410,6 +2442,9 @@ struct ColorSegTree {
 题目：`n` 个数，`q` 次操作。`op=1 l r x`：`a[l..r]` 每个数与 `x` 取 min；`op=2 l r`：输出闭区间和。
 
 ```cpp
+int n = 5;                                 // 样例输入，抄题时换成你的输入
+vector<i64> a = {0, 1, 2, 3, 4, 5};        // 样例输入，抄题时换成你的输入
+int op = 2, l = 1, r = 5;                  // 样例输入，抄题时换成你的输入
 SegBeatsChminSum seg(n);
 seg.build(a);                                  // 建树：a 必须 1-indexed（长度 n+1）
 if (op == 1) { i64 x; cin >> x; seg.range_chmin(l, r, x); }  // 区间取 min
@@ -2537,6 +2572,8 @@ struct SegBeatsChminSum {
 题目：值域 `[-1e9, 1e9]` 上在线插入整数，查询某个值域闭区间内已有元素的累计和。
 
 ```cpp
+i64 x = 5;                                       // 样例输入，抄题时换成你的输入
+i64 l = -100, r = 10;                            // 样例输入，抄题时换成你的输入
 DynamicSegTree seg;
 int root = 0;
 seg.add(root, -1000000000LL, 1000000000LL, x, +1);          // 位置 x 上加 delta（可为负）
@@ -2620,6 +2657,10 @@ struct DynamicSegTree {
 题目：树上每个点一棵权值线段树，DFS 回溯时把儿子树合并进父亲，最后每个点都能拿到子树内的累计信息。
 
 ```cpp
+const int MAXN = 3;                            // 样例输入，抄题时换成你的输入
+int n = 2;                                     // 样例输入，抄题时换成你的输入
+vector<i64> val = {0, 1, 1};                   // 样例输入，抄题时换成你的输入
+int u = 1, v = 2;                              // 样例输入，抄题时换成你的输入
 MergeSegTree seg;
 int root[MAXN] = {};                           // root[u]：u 那棵树的根，初始为 0
 seg.add(root[u], 1, n, val[u], +1);            // 把 u 的权值 val[u] 插进 u 自己的树
@@ -2873,7 +2914,8 @@ struct SparseTable {
 题目：`n` 个数，窗口大小 `k`，输出每个滑动窗口的最大值。
 
 ```cpp
-vector<int> a;                                 // 0-indexed
+vector<int> a = {1, 3, -1, -3, 5, 3, 6, 7};    // 样例输入，抄题时换成你的输入（0-indexed）
+int k = 3;                                      // 样例输入，抄题时换成你的输入
 vector<int> ans = sliding_window_max(a, k);    // ans[i] 是以 a[i+k-1] 为右端点的窗口最大值
 for (int x : ans) cout << x << ' ';            // 共 a.size()-k+1 个
 ```
@@ -3175,6 +3217,8 @@ pair<vector<int>, vector<int>> nearest_less(const vector<int>& a) {
 
 **最小完整示例（先抄这一段就能跑）：**
 
+依赖：单调栈：左右第一个更小元素 节的 nearest_less 函数，抄板时一起抄上。
+
 ```cpp
 // h 1-indexed：柱状图最大矩形面积。
 vector<int> h = {0, 2, 1, 5, 6, 2, 3}; // h[0] 占位
@@ -3261,7 +3305,9 @@ vector<pair<i64,i64>> merge_intervals(vector<pair<i64,i64>> segs) {
 **不会用就照抄：**
 
 ```cpp
-BagInfo bag(n + 1);          // 每个点一个包
+int n = 3;                     // 样例输入，抄题时换成你的输入（点数）
+int u = 1, v = 2, x = 1;       // 样例输入，抄题时换成你的输入（点编号与元素）
+vector<BagInfo> bag(n + 1);    // 每个点一个包
 bag[u].s.insert(x); bag[u].sum += x;   // 往包里塞元素
 merge_bags(bag[u], bag[v]);  // 把 v 的包并入 u 的包
 int ans = (int)bag[u].s.size();        // 合并后的集合大小/和就是答案
@@ -3386,6 +3432,8 @@ void dfs_merge_example(int u, int parent, vector<BagInfo>& bag, const vector<vec
 题目：给 `a[1..n]` 建最小笛卡尔树（RMQ / 区间最值分治），拿到树根和每个位置的左右儿子。
 
 ```cpp
+int n = 3;                                   // 样例输入，抄题时换成你的输入
+vector<int> a = {0, 3, 1, 2};                // 样例输入，抄题时换成你的输入（1-indexed，a[0] 占位）
 vector<int> lc(n + 1), rc(n + 1);
 int root = build_cartesian_tree(a, lc, rc);  // 1. 建树：a 必须 1-indexed，lc/rc 被填成左右儿子
 // 2. 中序遍历 lc/rc 即原序列；根是最小值位置，左右子树分别对应左右区间
@@ -3958,10 +4006,12 @@ for (auto op : ops) {
 题目：`n` 个数，求两两异或的最大值（最大异或对）。
 
 ```cpp
+vector<int> a = {3, 10, 5, 25, 2, 8};              // 样例输入，抄题时换成你的输入
 BinaryTrie trie;
 for (int x : a) trie.insert(x);                        // 1. 先把所有数插进去
 int ans = 0;
 for (int x : a) ans = max(ans, trie.max_xor(x));       // 2. 对每个数查与集合的最大异或
+cout << ans << '\n';                                   // 3. 输出最大异或对
 ```
 
 样例：`a=[3,10,5,25,2,8]` -> 输出 `28`（5 xor 25）。
@@ -4056,7 +4106,7 @@ cout << pt.query_max_xor(pt.root[L - 1], pt.root[R], x) << '\n';  // 2. 两版�
 **传参要求（照这个传不会错）：**
 
 - `PersistentBinaryTrie pt`：直接构造；`root` 初始为 `{0}`（空版本），节点数多可传 `PersistentBinaryTrie(n * 31)` 预留。
-- `insert(old_root, x)`：在旧版本上插 `x`，返回新版本根；按前缀逐个插入后 `pt.root.push_back(返回值)`。
+- `insert(old_root, x)`：在旧版本上插 `x`，返回新版本根；按前缀逐个插入后 `pt.root.push_back（返回值）`。
 - `query_max_xor(left_root, right_root, x)`：区间 `[l,r]` 内的数与 `x` 的最大异或；`left_root = root[l-1]`、`right_root = root[r]`（版本相减），返回最大异或值。
 - 下标 1-based：`root[i]` 是前缀 `pre[1..i]` 的版本。
 - 最大子段异或：版本建在前缀数组 `pre[0..n]` 上，枚举右端点 `j` 时查前缀范围 `[l-1, j-1]`（原区间 `[l,r]` 对应下标范围 `[l-1,r-1]`）。
@@ -4263,6 +4313,8 @@ struct Treap {
 题目：动态序列：在第 `pos` 个元素后插入 `v`、删除第 `pos` 个、查询当前第 `k` 个元素。
 
 ```cpp
+int n = 3;                                   // 样例输入，抄题时换成你的输入
+vector<int> a = {0, 1, 2, 3};                // 样例输入，抄题时换成你的输入（1-indexed，a[0] 占位）
 ImplicitTreap it;
 for (int i = 1; i <= n; ++i) it.insert_after(it.size(it.root), a[i]);  // 1. 建初始序列（0-based 位置）
 it.insert_after(2, 9);                 // 2. 在第 2 个元素后插入 9
@@ -4613,6 +4665,9 @@ struct LinkCutTree {
 题目：给 `n` 个数，求任意子集异或的最大值，并判断某个数能否被子集异或表示。
 
 ```cpp
+int n = 3;                                 // 样例输入，抄题时换成你的输入
+vector<int> a = {1, 2, 4};                 // 样例输入，抄题时换成你的输入
+i64 x = 3;                                 // 样例输入，抄题时换成你的输入
 LinearBasis lb;
 for (int i = 0; i < n; ++i) lb.insert(a[i]);     // 1. 全部插入（重复/线性相关会自动跳过）
 cout << lb.max_xor() << '\n';                    // 2. 子集异或最大值（空集视为 0）
@@ -4740,7 +4795,8 @@ using OrderedSet = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistic
 题目：`n` 个三维点，统计每个点前面满足 `x<=X, y<=Y, z<=Z` 的点数（三维偏序）。
 
 ```cpp
-vector<Point3D> a(n);                  // 1. 读入 x,y,z 并赋 id=i
+int n = 3, m = 2;                          // 样例输入，抄题时换成你的输入
+vector<Point3D> a = {{1, 1, 1, 0}, {1, 2, 2, 1}, {2, 2, 2, 2}};  // 样例输入，抄题时换成你的输入（1. 读入 x,y,z 并赋 id=i）
 sort(a.begin(), a.end(), [](auto& p, auto& q) { return p.x < q.x; });  // 2. 按 x 排序
 vector<i64> ans(n);
 FenwickCompact<int> fw(m);             // 3. z 压缩成 1..m 后当 BIT 下标
@@ -4748,7 +4804,7 @@ cdq_3d(a, 0, n, fw, ans);              // 4. CDQ：按 y 归并、BIT 维护 z
 for (int i = 0; i < n; ++i) cout << ans[i] << '\n';   // 5. ans[id] 即该点的答案
 ```
 
-样例：三点 `(1,1,1),(2,2,2),(1,2,2)`（id 0,1,2）-> `ans=[0,1,2]`。
+样例：三点 `(1,1,1),(1,2,2),(2,2,2)`（id 0,1,2）-> `ans=[0,1,2]`。
 
 **传参要求（照这个传不会错）：**
 
@@ -4816,17 +4872,24 @@ void cdq_3d(vector<Point3D>& a, int l, int r, FenwickCompact<int>& fw, vector<i6
 
 题目：静态数组 `a[1..n]`，`m` 个询问 `[l,r]` 内第 `k` 小（答案值域 1..V，整体二分）。
 
+依赖：CDQ 分治：三维偏序计数骨架 节的 FenwickCompact，抄板时一起抄上。
+
 ```cpp
 struct Update { int pos, value; };            // 每个元素 = 一个修改（在 pos 处加入一个 value）
 struct Query { int l, r, k, id; };
+int n = 5, V = 5;                             // 样例输入，抄题时换成你的输入
+vector<Update> updates = {{1, 1}, {2, 5}, {3, 2}, {4, 4}, {5, 3}};  // 样例输入，抄题时换成你的输入
+vector<Query> queries = {{2, 5, 1, 0}};       // 样例输入，抄题时换成你的输入（[2,5] 第 1 小 -> ans[0]=2）
+vector<int> ans(1);                           // 样例输入，抄题时换成你的输入（按询问个数开）
 FenwickCompact<int> fw(n);                    // 计数 BIT：可借本节 CDQ 的 FenwickCompact
 auto apply = [&](Update u) { fw.add(u.pos, 1); };
 auto undo  = [&](Update u) { fw.add(u.pos, -1); };
 auto check = [&](Query q) { return fw.sum(q.r) - fw.sum(q.l - 1) >= q.k; };
 parallel_bs(1, V, updates, queries, ans, apply, undo, check);   // ans[q.id] 即第 k 小
+cout << ans[0] << '\n';                       // 样例输出：2
 ```
 
-样例：`a=[1,5,2,4,3]`；询问 `[2,5]` 第 2 小 -> `ans[0]=2`（区间 5,2,4,3 中第 2 小是 2）。
+样例：`a=[1,5,2,4,3]`；询问 `[2,5]` 第 1 小 -> `ans[0]=2`（区间 5,2,4,3 中最小是 2）。
 
 **传参要求（照这个传不会错）：**
 

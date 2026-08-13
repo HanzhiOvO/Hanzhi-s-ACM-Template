@@ -20,6 +20,7 @@
 题目：`n` 个点的带权树（顶点从 1 开始编号），求直径长度。
 
 ```cpp
+int n = 3;                                   // 样例输入，抄题时换成你的输入
 vector<vector<pair<int, i64>>> g(n + 1);     // 1. 邻接表：顶点从 1 开始编号
 for (int i = 1; i < n; ++i) { int u, v; i64 w; cin >> u >> v >> w; g[u].push_back({v, w}); g[v].push_back({u, w}); }  // 2. 加无向带权边
 cout << tree_diameter(g) << '\n';            // 3. 直接调用，返回直径长度
@@ -234,7 +235,7 @@ struct LCA {
 > - **本质**：一棵静态树（或森林）上的所有 LCA 询问都已提前读入时，以并查集离线求每一对点的最近公共祖先。
 > - **接法**：给一棵 `n <= 5e5` 的静态树和 `q` 个“求 `u,v` 的 LCA”询问，所有询问先输入、后统一输出。对边调用 `add_edge`，每个询问保存 `id = add_query(u,v)`，`auto ans = solver.solve(root)` 后输出 `ans[id]`。如果题目混有在线改根、修改边或动态查询，则回到倍增、树链剖分或 LCT，不能用这份离线板子。
 > - **复杂度判定**：`O((n + q) alpha(n))`，其中 `alpha` 是反阿克曼函数；空间 `O(n+q)`。
-> - **维护的量**：`g`（邻接表）、`query[u]`（挂在 u 上的询问 `{另一端, 编号}`）、`answer`（答案数组）、`dsu/ancestor`（并查集与代表元祖先）。
+> - **维护的量**：`g`（邻接表）、`query[u]`（挂在 u 上的询问 `{另一端， 编号}`）、`answer`（答案数组）、`dsu/ancestor`（并查集与代表元祖先）。
 > - **警告**：这是离线算法，必须先 `add_query` 再 `solve`；并查集的合并发生在“孩子子树 DFS 完成”之后；无根森林里不同连通块的询问答案保持 `-1`；深链很深时要留意递归栈。
 
 
@@ -243,6 +244,7 @@ struct LCA {
 题目：`n` 个点的树，`q` 个"求 `u,v` 的 LCA"询问全部先读入、最后统一输出。
 
 ```cpp
+int n = 3, q = 2;                            // 样例输入，抄题时换成你的输入
 TarjanOfflineLCA solver(n);                  // 1. 结构体定义：TarjanOfflineLCA(点数 n)
 for (int i = 1; i < n; ++i) { int u, v; cin >> u >> v; solver.add_edge(u, v); }  // 2. 加无向树边
 vector<int> id(q);
@@ -352,6 +354,7 @@ struct TarjanOfflineLCA {
 题目：根为 `1` 的树，`q` 次询问 `(u,k)` 求第 `k` 级祖先。
 
 ```cpp
+int n = 4, q = 2;                            // 样例输入，抄题时换成你的输入
 LongChainKthAncestor solver(n);              // 1. 结构体定义：LongChainKthAncestor(点数 n)
 for (int i = 1; i < n; ++i) { int u, v; cin >> u >> v; solver.add_edge(u, v); }  // 2. 加无向边
 solver.build(1);                             // 3. 建树：根从 1 开始；必须先 build 再查询
@@ -485,6 +488,7 @@ struct LongChainKthAncestor {
 题目：`n` 个点的树，若干次"路径上每个点加 `x`"，最后问点 `u` 的值（区间加/单点查）。
 
 ```cpp
+int n = 3, u = 2;                            // 样例输入，抄题时换成你的输入
 HLD hld(n);                                  // 1. 结构体定义：HLD(点数 n)
 for (int i = 1; i < n; ++i) { int u, v; cin >> u >> v; hld.add_edge(u, v); }  // 2. 加无向边
 hld.build(1);                                // 3. 建树：根从 1 开始；必须先 build 再操作
@@ -619,6 +623,8 @@ struct HLD {
 题目：`n` 个点、点权固定不修改；`q` 次询问 `(u,v,k)` 求路径上点权第 `k` 小。
 
 ```cpp
+int n = 3, q = 1;                            // 样例输入，抄题时换成你的输入
+vector<i64> a = {0, 3, 1, 2};                // 样例输入，抄题时换成你的输入（1-indexed 点权 a[1..n]）
 TreePathKth solver(n);                       // 1. 结构体定义：TreePathKth(点数 n)
 for (int i = 1; i < n; ++i) { int u, v; cin >> u >> v; solver.add_edge(u, v); }  // 2. 加无向边
 solver.set_values(a);                        // 3. 传 1-indexed 点权数组 a[1..n]
@@ -787,6 +793,7 @@ struct TreePathKth {
 题目：`n` 个点的树，`q` 次操作：子树整体加 `x` / 问点 `u` 当前值。
 
 ```cpp
+int n = 3;                                   // 样例输入，抄题时换成你的输入
 SubtreeAddPointQuery solver(n);              // 1. 结构体定义：SubtreeAddPointQuery(点数 n)
 for (int i = 1; i < n; ++i) { int u, v; cin >> u >> v; solver.add_edge(u, v); }  // 2. 加无向边
 solver.dfs(1, 0);                            // 3. 必须先 dfs 出 tin/tout 再操作
@@ -880,6 +887,7 @@ struct SubtreeAddPointQuery {
 题目：`n` 个点带权的树，`q` 次操作：改点权 / 问子树点权和。
 
 ```cpp
+int n = 3;                                   // 样例输入，抄题时换成你的输入
 SubtreeSum solver(n);                        // 1. 结构体定义：SubtreeSum(点数 n)
 for (int i = 1; i < n; ++i) { int u, v; cin >> u >> v; solver.add_edge(u, v); }  // 2. 加无向边
 solver.dfs(1, 0);                            // 3. 必须先 dfs（dfs 时把初始点权放进 BIT）
@@ -978,7 +986,10 @@ struct SubtreeSum {
 
 题目：`n` 个点的树，`q` 条路径，每条路径上的点计数 +1，最后输出每个点的覆盖次数。
 
+依赖：LCA（倍增）节 struct，抄板时一起抄上。
+
 ```cpp
+int n = 3, q = 1;                            // 样例输入，抄题时换成你的输入
 LCA lca_solver(n);                           // 1. 建 LCA 倍增（提供 lca 与 up）
 vector<vector<int>> g(n + 1);                // 2. 另存一份邻接表供 DFS 汇总
 for (int i = 1; i < n; ++i) { int u, v; cin >> u >> v; lca_solver.add_edge(u, v); g[u].push_back(v); g[v].push_back(u); }
@@ -1041,7 +1052,10 @@ void collect_tree_diff(int u, int p, const vector<vector<int>>& g, vector<i64>& 
 
 题目：`n` 个点的树，`q` 组询问：路径 `a-b` 与路径 `c-d` 是否相交。
 
+依赖：LCA（倍增）节 struct，抄板时一起抄上。
+
 ```cpp
+int n = 4, q = 1;                            // 样例输入，抄题时换成你的输入
 LCA solver(n);                               // 1. 建 LCA 倍增：构造 + 加边
 for (int i = 1; i < n; ++i) { int u, v; cin >> u >> v; solver.add_edge(u, v); }  // 2. 加无向边
 solver.build(1);                             // 3. 必须先 build 再查询
@@ -1091,6 +1105,8 @@ bool path_intersect(const LCA& solver, int a, int b, int c, int d) {
 题目：`n` 个点带权树，父子不能同时选，求最大点权和（点权默认 1 时即最大独立集大小）。
 
 ```cpp
+int n = 3;                                   // 样例输入，抄题时换成你的输入
+vector<i64> w = {0, 5, 1, 4};                // 样例输入，抄题时换成你的输入（1-indexed 点权 w[1..n]）
 TreeIndependentSet solver(n);                // 1. 结构体定义：TreeIndependentSet(点数 n)
 for (int i = 1; i < n; ++i) { int u, v; cin >> u >> v; solver.add_edge(u, v); }  // 2. 加无向边
 for (int i = 1; i <= n; ++i) solver.w[i] = w[i];   // 3. 赋点权（不赋默认全 1）
@@ -1168,6 +1184,7 @@ struct TreeIndependentSet {
 题目：`n` 个点的带权树（顶点从 0 开始编号），每个点至多选一条邻边，求最大匹配权值和选边。
 
 ```cpp
+int n = 3;                                   // 样例输入，抄题时换成你的输入
 vector<vector<pair<int, i64>>> g(n);         // 1. 邻接表：顶点从 0 开始编号
 for (int i = 0; i < n - 1; ++i) { int u, v; i64 w; cin >> u >> v >> w; g[u].push_back({v, w}); g[v].push_back({u, w}); }  // 2. 加无向带权边
 TreeMatchingResult res = tree_maximum_weight_matching(g);  // 3. 一次调用出答案
@@ -1270,6 +1287,7 @@ TreeMatchingResult tree_maximum_weight_matching(
 题目：`n` 个点 `n` 条边的无向图（每个连通块恰有一个环），点带权，相邻点不能同时选，求最大点权和。
 
 ```cpp
+int n = 3;                                   // 样例输入，抄题时换成你的输入
 vector<i64> weight(n);                       // 1. 点权：顶点从 0 开始编号
 for (int i = 0; i < n; ++i) cin >> weight[i];
 vector<pair<int, int>> edges(n);             // 2. 边数 = 点数（每个连通块恰一个环）
@@ -1433,7 +1451,10 @@ i64 maximum_weight_independent_set_unicyclic_forest(
 
 题目：`n` 个角色各有收益，`n` 条无向互斥边（每个连通块恰有一个环），求互不冲突的最大总收益。
 
+依赖：基环树最大点权独立集 节函数 maximum_weight_independent_set_unicyclic_forest，抄板时一起抄上。
+
 ```cpp
+int n = 3;                                   // 样例输入，抄题时换成你的输入
 vector<i64> weight(n);
 for (int i = 0; i < n; ++i) cin >> weight[i];   // weight[i] = 角色 i 的收益
 vector<pair<int, int>> edges(n);
@@ -1482,6 +1503,7 @@ cout << ans << '\n';                            // 最大总收益
 题目：`n` 点树，对每个点 `u` 求所有点到 `u` 的距离和。
 
 ```cpp
+int n = 3;                                   // 样例输入，抄题时换成你的输入
 RerootDistanceSum sol;
 sol.init(n);                        // 1. 初始化，点编号 1..n
 for (int i = 1; i < n; ++i) {
@@ -1781,7 +1803,7 @@ struct TreeCentroid {
 > - **本质**：统计树上路径类问题，如距离不超过 `K` 的点对数。
 > - **接法**：把本节 `struct/class/函数组` 整段抄到 `solve()` 上面；**外部只调用下面 API 列出的接口**，不要把内部递归参数直接当题面参数。
 > - **复杂度判定**：常见 `O(n log n)`。
-> - **维护的量**：`sz[u]`（当前连通块的子树大小）；`dead[u]`（该点已被当作重心删除的标记）；`g` 为带权邻接表，存 `(终点, 边权)`。
+> - **维护的量**：`sz[u]`（当前连通块的子树大小）；`dead[u]`（该点已被当作重心删除的标记）；`g` 为带权邻接表，存 `（终点， 边权）`。
 > - **警告**：每层分治要标记删除重心；统计时先减去同一子树内部贡献，再加全局贡献。
 
 
@@ -2048,7 +2070,7 @@ private:
 > - **本质**：树上动态维护一批“被标记/变黑”的点，支持单点开关，查询某个点到最近标记点的距离。
 > - **接法**：把本节 `struct/class/函数组` 整段抄到 `solve()` 上面；**外部只调用下面 API 列出的接口**，不要把内部递归参数直接当题面参数。
 > - **复杂度判定**：建树 `O(n log n)`，每次修改/查询 `O(log^2 n)`，如果用堆加懒删除可做到 `O(log n log n)` 量级。
-> - **维护的量**：`up[u]`（点 u 到每个点分祖先重心的 `(重心, 距离)` 列表）；`bag[c]`（重心 c 处所有已激活点到 c 的距离 multiset）；`active[u]`（u 当前是否点亮）。
+> - **维护的量**：`up[u]`（点 u 到每个点分祖先重心的 `（重心， 距离）` 列表）；`bag[c]`（重心 c 处所有已激活点到 c 的距离 multiset）；`active[u]`（u 当前是否点亮）。
 > - **警告**：每个点要记录它到所有点分树祖先重心的距离；删除时用 `multiset.find` 删除一个距离；没有标记点时返回 `-1`。
 
 
@@ -2197,7 +2219,14 @@ struct DynamicCentroidDecomposition {
 
 题目：给 `k` 个关键点，建出只含关键点与两两 LCA 的虚树。
 
+依赖：LCA（倍增）节 struct，抄板时一起抄上。
+
 ```cpp
+LCA solver(5);                               // 样例输入，抄题时换成你的输入（链 1-2-3-4-5）
+for (int i = 1; i < 5; ++i) solver.add_edge(i, i + 1);
+solver.build(1);
+vector<int> tin = {0, 1, 2, 3, 4, 5};        // 样例输入，抄题时换成你的输入（DFS 序）
+vector<int> depth = {0, 0, 1, 2, 3, 4};      // 样例输入，抄题时换成你的输入（深度）
 VirtualTree vt;
 vt.tin = tin; vt.depth = depth;                         // 1. 来自自备 LCA/HLD
 vt.lca = [&](int a, int b) { return solver.lca(a, b); };// 2. 绑定 LCA 回调
@@ -2265,7 +2294,12 @@ struct VirtualTree {
 
 题目：每次给 `k` 个关键点，求覆盖它们的最小 Steiner 树边长（关键点两两路径并的总长）。
 
+依赖：自备 LCA 结构（需 build(n, edges)、lca、distance 与 DFS 序数组 dfn），抄板时一起抄上。
+
 ```cpp
+int n = 5;                                   // 样例输入，抄题时换成你的输入（链 1-2-3-4-5）
+vector<pair<int, int>> edges = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};  // 样例输入，抄题时换成你的输入
+vector<int> dfn = {0, 1, 2, 3, 4, 5};        // 样例输入，抄题时换成你的输入（DFS 序数组）
 LCA solver;                            // 自备 LCA，需有 distance(a,b)
 solver.build(n, edges);                // 预处理
 vector<int> tin = dfn;                 // DFS 序数组
@@ -2375,7 +2409,14 @@ struct FunctionalGraphJump {
 题目：判断两棵无根树是否同构（可重标号）。
 
 ```cpp
+int n = 4;                              // 样例输入，抄题时换成你的输入
 vector<vector<int>> g1(n), g2(n);       // 0-indexed 无向邻接表
+g1[0].push_back(1); g1[1].push_back(0); // 样例：4 点链 0-1-2-3
+g1[1].push_back(2); g1[2].push_back(1);
+g1[2].push_back(3); g1[3].push_back(2);
+g2[0].push_back(1); g2[1].push_back(0); // 样例：4 点星形（中心 0）
+g2[0].push_back(2); g2[2].push_back(0);
+g2[0].push_back(3); g2[3].push_back(0);
 TreeHash h1 = unrooted_tree_hash(g1);   // 1. 整棵树的哈希
 TreeHash h2 = unrooted_tree_hash(g2);
 bool same = (h1 == h2);                 // 2. 哈希相等即同构
@@ -2466,7 +2507,7 @@ TreeHash unrooted_tree_hash(const vector<vector<int>>& g) {
 > - **本质**：大多数图论题的存图方式。
 > - **接法**：把本节 `struct/class/函数组` 整段抄到 `solve()` 上面；**优先调用下面 API 列出的入口**，其余 helper 默认不要从 `solve()` 直接调。
 > - **复杂度判定**：建图 `O(m)`。
-> - **维护的量**：`g[u]`（点 u 的所有出边终点，无权图）；`wg[u]`（点 u 的 `(终点, 边权)` 出边，有权图）。
+> - **维护的量**：`g[u]`（点 u 的所有出边终点，无权图）；`wg[u]`（点 u 的 `（终点， 边权）` 出边，有权图）。
 > - **警告**：无向图要加两次边；有权图用 `pair<int,i64>`。
 
 
@@ -2608,7 +2649,7 @@ cout << dist[n - 1][m - 1] << '\n';        // 4. -1 = 到不了
 
 **传参要求（照这个传不会错）：**
 
-- `grid_bfs(grid, starts)`：`grid` = 行字符串数组（0-indexed）；`starts` = 起点坐标 `(行, 列)` 列表。
+- `grid_bfs(grid, starts)`：`grid` = 行字符串数组（0-indexed）；`starts` = 起点坐标 `（行， 列）` 列表。
 - 返回值：`vector<vector<int>> dist`，`dist[x][y]` = 最近起点到 `(x,y)` 的最少步数；`-1` = 墙或不可达。
 - 只认 `'#'` 为墙，其余字符一律可走；障碍字符不同时改 `grid[nx][ny] == '#'` 这一处。
 
@@ -2731,7 +2772,7 @@ cout << (ans >= 1e9 ? -1 : ans) << '\n';   // 4. 1e9(INF) = 到不了
 
 **传参要求（照这个传不会错）：**
 
-- `min_turns_grid(grid, s, t)`：`grid` = 行字符串数组（0-indexed）；`s`/`t` = 起点/终点 `(行, 列)`。
+- `min_turns_grid(grid, s, t)`：`grid` = 行字符串数组（0-indexed）；`s`/`t` = 起点/终点 `（行， 列）`。
 - 返回值：`int`，s 到 t 的最少转弯次数（直走 0、转向 1）；`1e9`（INF）= 不可达。
 - 起点四个方向都当初始方向（距离 0），不用特判起步方向。
 - 若起点就是终点，返回 `0`，不用单独判。
@@ -4383,6 +4424,11 @@ i64 count_spanning_tree(int n, const vector<pair<int, int>>& edges, i64 mod) {
 题目：`n` 门课有先后依赖，边 `u->v` 表示先修 `u` 再修 `v`，求一种合法学习顺序。
 
 ```cpp
+int n = 4;                              // 样例输入，抄题时换成你的输入
+vector<vector<int>> g(n + 1);           // 1-based 邻接表
+g[1].push_back(2);                      // 样例边：1->2、2->3、3->4
+g[2].push_back(3);
+g[3].push_back(4);
 vector<int> order = topo_sort(n, g);           // 1-based 邻接表
 if ((int)order.size() < n) cout << "有环，无合法顺序\n";
 else for (int u : order) cout << u << ' ';     // 按序输出即可
@@ -4436,6 +4482,11 @@ vector<int> topo_sort(int n, const vector<vector<int>>& g) {
 题目：DAG 上每条边有权，求从某个入度为 0 的点出发到各点的最长距离。
 
 ```cpp
+int n = 3;                              // 样例输入，抄题时换成你的输入
+vector<vector<pair<int, i64>>> g(n + 1); // 1-based 邻接表，g[u] 存 {v, w}
+g[1].push_back({2, 5});                 // 样例边：1->2(5)、2->3(4)
+g[2].push_back({3, 4});
+int v = 3;                              // 样例询问：dp[3] = 9
 vector<i64> dp = dag_longest_path(n, g);   // g[u] 存 {v, w}，w 为 i64 权
 cout << dp[v] << '\n';                     // v 的最长路；NEG 表示不可达
 ```
@@ -4508,6 +4559,12 @@ vector<i64> dag_longest_path(int n, const vector<vector<pair<int, i64>>>& g) {
 题目：有向图问“删掉某点后哪些点从起点不可达”，即求每个点的直接支配者。
 
 ```cpp
+int n = 3;                              // 样例输入，抄题时换成你的输入
+vector<vector<int>> g(n);               // 0-based 邻接表
+g[0].push_back(1);                      // 样例边：0->1、0->2、1->2
+g[0].push_back(2);
+g[1].push_back(2);
+int root = 0;                           // 样例源点
 DominatorTree dt(g);                  // g 为 0-based 邻接表
 vector<int> idom = dt.build(root);    // root 为源点（0-based）
 for (int v = 0; v < n; ++v) cout << idom[v] << ' '; // 直接支配者，-1=不可达
@@ -4615,7 +4672,12 @@ struct DominatorTree {
 
 题目：DAG 上选尽量少的路径覆盖所有点，求最少路径条数。
 
+依赖：08 章 HopcroftKarp struct，抄板时一起抄上。
+
 ```cpp
+int n = 3;                              // 样例输入，抄题时换成你的输入
+vector<vector<int>> dag(n + 1);         // 1-based 邻接表
+dag[1].push_back(2);                    // 样例边：1->2
 int ans = minimum_path_cover_dag(n, dag);  // dag 为 1-based 邻接表
 cout << ans << '\n';                        // 最少路径条数
 ```
@@ -4655,8 +4717,11 @@ int minimum_path_cover_dag(int n, const vector<vector<int>>& dag) {
 题目：有向图问 `u`、`v` 是否互相可达（同一 SCC），并统计缩点个数。
 
 ```cpp
+int n = 2;                              // 样例输入，抄题时换成你的输入
+int u = 1, v = 2;                       // 样例查询点
 SCC scc(n);                 // n 为点数，编号 1..n
 scc.add_edge(u, v);         // 每条有向边都加
+scc.add_edge(v, u);         // 样例边：1->2、2->1
 int cnt = scc.run();        // 返回强连通分量个数
 if (scc.comp[u] == scc.comp[v]) cout << "互相可达\n";
 ```
@@ -4746,8 +4811,12 @@ struct SCC {
 题目：无向图问删掉哪些点（或边）会使图不连通，输出所有割点与桥。
 
 ```cpp
+int n = 3;                              // 样例输入，抄题时换成你的输入
+int u = 1, v = 2;                       // 样例边起点/终点
 CutBridge cb(n);                    // n 为点数，编号 1..n
 cb.add_edge(u, v);                  // 无向边加一次即可
+cb.add_edge(2, 3);                  // 样例：三角形 1-2-3-1
+cb.add_edge(3, 1);
 cb.run();                           // 跑完答案直接可读
 if (cb.is_cut[u]) cout << "u 是割点\n";
 for (auto [a, b] : cb.bridges) cout << a << ' ' << b << '\n';
@@ -4831,8 +4900,13 @@ struct CutBridge {
 题目：无向图删掉所有桥后分成几个连通块，输出每个点所属边双。
 
 ```cpp
+int n = 4;                              // 样例输入，抄题时换成你的输入
+int u = 1, v = 2;                       // 样例边起点/终点
 EdgeBCC eb(n);                  // n 为点数，编号 1..n
 eb.add_edge(u, v);              // 无向边加一次即可
+eb.add_edge(2, 3);              // 样例：边 1-2、2-3、3-1、3-4
+eb.add_edge(3, 1);
+eb.add_edge(3, 4);
 int cnt = eb.build();           // 返回边双个数
 for (int u = 1; u <= n; ++u) cout << eb.comp[u] << ' ';
 ```
@@ -4931,8 +5005,11 @@ struct EdgeBCC {
 题目：无向图列出所有点双连通分量，并标记割点（后续可建圆方树）。
 
 ```cpp
+int n = 3;                              // 样例输入，抄题时换成你的输入
+int u = 1, v = 2;                       // 样例边起点/终点
 VertexBCC vb(n);                // n 为点数，编号 1..n
 vb.add_edge(u, v);              // 无向边加一次即可
+vb.add_edge(2, 3);              // 样例：边 1-2、2-3
 vb.build();                     // 预处理完成
 if (vb.cut[u]) cout << "u 是割点\n";
 for (auto& c : vb.bcc) { /* c 是一个点双，割点会出现在多个点双里 */ }
@@ -5037,8 +5114,12 @@ struct VertexBCC {
 题目：仙人掌图（每条边至多在一个环中），提取所有环，按环长处理。
 
 ```cpp
+int n = 3;                              // 样例输入，抄题时换成你的输入
+int u = 1, v = 2;                       // 样例边起点/终点
 CactusCycles cc(n);                         // n 为点数，编号 1..n
 cc.add_edge(u, v);                          // 无向边加一次即可
+cc.add_edge(2, 3);                          // 样例：边 1-2、2-3、3-1
+cc.add_edge(3, 1);
 vector<vector<int>> cyc = cc.find_cycles(); // 每个环是边 id 列表
 for (auto& c : cyc) cout << c.size() << '\n'; // 环长（边数）
 ```
@@ -5128,6 +5209,8 @@ struct CactusCycles {
 题目：`n` 个布尔变量，条件形如“`a` 为真则 `b` 为真”“`a` 或 `b` 至少一个”，求一组可行赋值。
 
 ```cpp
+int n = 1;                              // 样例输入，抄题时换成你的输入
+int a = 0, b = 0;                       // 样例变量（0-based 下标）
 TwoSAT ts(n);                       // n 个变量，下标 0..n-1
 ts.imply(a, true, b, false);        // a=true => b=false
 ts.add_or(a, false, b, true);       // (a=false) 或 (b=true)，即 a 假则 b 真
@@ -5235,8 +5318,12 @@ struct TwoSAT {
 题目：无向图求一笔画回路（每条边恰好走一次），输出顶点顺序。
 
 ```cpp
+int n = 3;                              // 样例输入，抄题时换成你的输入
+int u = 1, v = 3;                       // 样例边起点/终点
 EulerUndirected eu(n);                  // n 为点数，编号 1..n
 eu.add_edge(u, v);                      // 无向边加一次即可
+eu.add_edge(1, 2);                      // 样例：三角形 1-2-3-1
+eu.add_edge(2, 3);
 eu.dfs(1);                              // 从起点开始走（先自行验证度数条件）
 reverse(eu.path.begin(), eu.path.end()); // path 是倒序，反转后输出
 for (int x : eu.path) cout << x << ' ';
@@ -5306,6 +5393,12 @@ struct EulerUndirected {
 题目：DAG 上问所有点对可达性（`u` 能否到达 `v`），多次查询。
 
 ```cpp
+int n = 3;                              // 样例输入，抄题时换成你的输入
+vector<vector<int>> dag(n + 1);         // 1-based 邻接表
+dag[1].push_back(2);                    // 样例边：1->2、2->3
+dag[2].push_back(3);
+vector<int> topo = {1, 2, 3};           // 样例拓扑序
+int u = 1, v = 3;                       // 样例查询：1 可达 3
 auto reach = dag_transitive_closure<5005>(n, dag, topo); // MAXN 需 >= n+1
 if (reach[u][v]) cout << "u 可到达 v\n";
 ```
@@ -5416,6 +5509,8 @@ void bron_kerbosch(bitset<MAXC> R, bitset<MAXC> P, int n) {
 题目：`n` 点 `m` 条无向边，统计三元环个数。
 
 ```cpp
+int n = 3;                              // 样例输入，抄题时换成你的输入
+int m = 3;                              // 样例边数
 vector<pair<int, int>> edges;
 for (int i = 0; i < m; ++i) {
     int u, v; cin >> u >> v;
@@ -5709,7 +5804,16 @@ struct HopcroftKarp {
 
 题目：二分图已跑完 Hopcroft-Karp（得到 `ml/mr`），求最小点覆盖（覆盖点数 = 最大匹配数）。
 
+依赖：08 章 HopcroftKarp struct，抄板时一起抄上。
+
 ```cpp
+int nL = 2, nR = 2;                     // 样例输入，抄题时换成你的输入
+vector<vector<int>> g(nL + 1);          // 左部邻接表，g[l] 存可达的右点
+g[1].push_back(1);                      // 样例边：(1,1)(1,2)(2,1)
+g[1].push_back(2);
+g[2].push_back(1);
+vector<int> ml = {0, 2, 1};             // 样例最大匹配：左1-右2、左2-右1
+vector<int> mr = {0, 2, 1};
 auto [coverL, coverR] =
     min_vertex_cover_bipartite(nL, nR, g, ml, mr); // 1. 传左右点数、左部邻接表、匹配结果
 cout << coverL.size() + coverR.size() << '\n';     // 2. 覆盖点数，等于最大匹配数

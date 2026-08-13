@@ -459,7 +459,7 @@ struct MultiplicativeSieve {
 > - **本质**：单个数分解、求约数个数、phi 单点。
 > - **接法**：单个 `n` 不太大时直接 `factorize_trial(n)`；返回 `（质因子， 次数）`。可以据此算约数个数、欧拉函数、枚举约数。若 `n` 是 64 位大整数且很多次分解，翻 Pollard-Rho。
 > - **复杂度判定**：`O(sqrt n)`。
-> - **维护的量**：无状态；返回 `f`（`(质因子, 次数)` 列表）。
+> - **维护的量**：无状态；返回 `f`（`（质因子， 次数）` 列表）。
 > - **警告**：循环结束后若 `n > 1`，剩下的 `n` 就是最后一个质因子。
 
 
@@ -478,7 +478,7 @@ for (auto [p, c] : f)
 **传参要求（照这个传不会错）：**
 
 - `factorize_trial(n)`：`n` 为 i64；`n <= 1e12` 时 `O(sqrt n)` 单次可行，更大或需多次分解时翻 Pollard-Rho。
-- 返回 `vector<pair<i64,int>>`：每个元素 `(质因子, 次数)`，按质因子升序；`n` 本身是质数时返回 `{(n,1)}`；`n=1` 返回空列表。
+- 返回 `vector<pair<i64,int>>`：每个元素 `（质因子， 次数）`，按质因子升序；`n` 本身是质数时返回 `{(n,1)}`；`n=1` 返回空列表。
 - 可基于返回值算约数个数 `∏(c+1)`、欧拉函数，或用 `divisors_from_factorization` 枚举约数。
 
 
@@ -551,6 +551,8 @@ i64 phi_single(i64 n) {
 
 题目：枚举 `36` 的所有正约数。
 
+依赖：试除分解质因数 节的 factorize_trial，抄板时一起抄上。
+
 ```cpp
 auto fac = factorize_trial(36);            // 1. 先分解质因数
 auto divs = divisors_from_factorization(fac); // 2. DFS 乘出全部约数（已排序）
@@ -561,7 +563,7 @@ for (i64 d : divs) cout << d << ' ';
 
 **传参要求（照这个传不会错）：**
 
-- `divisors_from_factorization(fac)`：`fac` 直接传 `factorize_trial` 的返回（`(质因子, 次数)` 升序列表）；返回所有正约数（升序，含 1 与 n 本身）。
+- `divisors_from_factorization(fac)`：`fac` 直接传 `factorize_trial` 的返回（`（质因子， 次数）` 升序列表）；返回所有正约数（升序，含 1 与 n 本身）。
 - `fac` 为空（n=1）时返回 `{1}`。
 - 约数个数远小于 n，枚举安全；必须先分解，不要对 n 直接枚举到 sqrt。
 
@@ -972,6 +974,8 @@ struct LehmerPrimeCounter {
 
 题目：统计 `1<=i,j<=10` 中 `gcd(i,j)=1` 的互质数对个数。
 
+依赖：线性筛：phi / mu / 约数个数 节的 MultiplicativeSieve，抄板时一起抄上。
+
 ```cpp
 MultiplicativeSieve s(10);                    // 1. 先线性筛 mu（存在 s.mu）
 vector<i64> prefix_mu(11, 0);
@@ -1137,6 +1141,8 @@ struct Comb {
 **最小完整示例（先抄这一段就能跑）：**
 
 题目：`p=7` 下求 `C(10,3) mod 7`。
+
+依赖：组合数预处理 节的 Comb，抄板时一起抄上。
 
 ```cpp
 Comb comb(6, 7);                       // 1. 预处理组合数到 p-1=6
@@ -1325,6 +1331,8 @@ exlucas_ll binom_mod_composite(exlucas_ll n, exlucas_ll k, exlucas_ll mod) {
 
 题目：模 `1e9+7` 下求第 `5` 个 Catalan 数（如 5 对括号的合法序列数）。
 
+依赖：线性求逆元与阶乘逆元 节的 CombFast，抄板时一起抄上。
+
 ```cpp
 CombFast comb(10, 1000000007);         // 1. 预处理到 2n=10（组合数 O(1) 查询）
 i64 ans = catalan(5, comb);            // 2. 直接返回 Catalan(5)
@@ -1478,7 +1486,7 @@ vector<int> code = prufer_encode(g);                  // 1. 调用：编码，�
 auto edges = prufer_decode(code);                     // 2. 调用：解码回边集
 ```
 
-样例：`prufer_encode(4 点星形树) -> {0, 0}`；`prufer_decode({0, 0}) -> 3 条边`。
+样例：`prufer_encode(4 点星形树） -> {0, 0}`；`prufer_decode({0, 0}) -> 3 条边`。
 
 **传参要求（照这个传不会错）：**
 
@@ -1563,6 +1571,8 @@ vector<pair<int, int>> prufer_decode(const vector<int>& code) {
 **最小完整示例（先抄这一段就能跑）：**
 
 题目：解同余组 `x ≡ 2 (mod 3)` 且 `x ≡ 3 (mod 5)`。
+
+依赖：本册通用辅助函数 节的 exgcd，抄板时一起抄上。
 
 ```cpp
 vector<i64> a = {2, 3}, m = {3, 5};
@@ -1730,6 +1740,8 @@ i64 floor_sum(i64 n, i64 m, i64 a, i64 b) {
 
 题目：求 `2^x ≡ 7 (mod 13)` 的最小非负整数解。
 
+依赖：本册通用辅助函数 节的 inv_general，抄板时一起抄上。
+
 ```cpp
 i64 x = bsgs(2, 7, 13);   // 1. 调用：求 a^x ≡ b (mod mod) 的最小非负 x
 cout << x << '\n';          // 2. 取结果：-1 表示无解
@@ -1800,6 +1812,8 @@ i64 bsgs(i64 a, i64 b, i64 mod) {
 **最小完整示例（先抄这一段就能跑）：**
 
 题目：求 `2^x ≡ 4 (mod 6)` 的最小非负解（a 与模数不互质）。
+
+依赖：本册通用辅助函数 节的 mod_pow / inv_general，抄板时一起抄上。
 
 ```cpp
 i64 x = exbsgs(2, 4, 6);   // 1. 调用：自动先约 gcd(a,m) 再转 BSGS
@@ -1872,6 +1886,8 @@ i64 exbsgs(i64 a, i64 b, i64 mod) {
 **最小完整示例（先抄这一段就能跑）：**
 
 题目：NTT 前求质数 `998244353` 的原根。
+
+依赖：本册通用辅助函数 节的 mod_pow，抄板时一起抄上。
 
 ```cpp
 i64 g = primitive_root(998244353);   // 1. 调用：mod 传质数
@@ -2066,6 +2082,8 @@ bool is_prime_u64(ui64 n) {
 
 题目：分解 `n = 8051`（= 83 × 97）的全部质因子。
 
+依赖：Miller-Rabin 素性测试 节的 is_prime_u64 / mod_mul_u64，抄板时一起抄上。
+
 ```cpp
 vector<ui64> fac;
 factor_u64(8051, fac);           // 1. 调用：质因子递归填入 fac（无序）
@@ -2135,6 +2153,8 @@ void factor_u64(ui64 n, vector<ui64>& fac) {
 题目：求 Fibonacci 第 `n` 项 mod `1e9+7`（`n <= 1e18`）。
 
 ```cpp
+i64 mod = 1000000007LL;             // 样例输入，抄题时换成你的输入（题目模数 1e9+7）
+i64 n = 10;                         // 样例输入，抄题时换成你的输入（样例 n=10 -> 输出 55）
 Matrix A(2, 2, mod);        // 1. 结构体定义：Matrix(行, 列, 模数)
 A.a[0][0] = 1; A.a[0][1] = 1;   // 转移矩阵：state_{i+1} = A * state_i
 A.a[1][0] = 1; A.a[1][1] = 0;   // state_i = [F_i; F_{i-1}]
@@ -2340,7 +2360,7 @@ cout << ans << '\n';                       // 74
 **传参要求（照这个传不会错）：**
 
 - `n`：计数范围 `[1, n]` 的右端点，`n` 可达 `1e18`（返回 `i64`）。
-- `p`：除数集合，`m = p.size() < 62`（`1LL << m` 不溢出）；内部按 `lcm(p[i] 的子集) <= n` 才计贡献，乘积溢出会跳过该子集。
+- `p`：除数集合，`m = p.size() < 62`（`1LL << m` 不溢出）；内部按 `lcm(p[i] 的子集） <= n` 才计贡献，乘积溢出会跳过该子集。
 - 返回值：`1..n` 中能被 `p` 中**至少一个**数整除的个数（整数，不取模）。
 - 若 `p` 含重复数或非质数也能正确计算，不必预处理成质数。
 
@@ -2736,6 +2756,8 @@ vector<i64> gauss_mod_unique(vector<vector<i64>> a, i64 mod) {
 
 题目：两状态赌博，状态 0 以 1/2 结束、1/2 去状态 1；状态 1 以 1/2 去状态 0、1/2 结束。求从各状态出发的期望轮数。
 
+依赖：模意义高斯消元：唯一解 节的 gauss_mod_unique，抄板时一起抄上。
+
 ```cpp
 vector<vector<pair<int, i64>>> trans(2);
 trans[0].push_back({1, 499122177}); // 状态 0 -> 状态 1，概率 1/2（模 998244353）
@@ -2941,6 +2963,8 @@ i64 cantor_rank_zero_based(const vector<int>& p) {
 **最小完整示例（先抄这一段就能跑）：**
 
 题目：已知 `f(x) = x^2` 在 `0..3` 的值，求 `f(5) mod 1e9+7`。
+
+依赖：本册通用辅助函数 节的 mod_pow，抄板时一起抄上。
 
 ```cpp
 vector<i64> y = {0, 1, 4, 9};                    // f(0), f(1), f(2), f(3)
@@ -3198,7 +3222,7 @@ Poly g = fps_inv(f, 4);          // g = {1, 998244352, 1, 998244352}，即 1-x+x
 - `fps_exp(f, n)`：要求 `f[0] == 0`；返回 exp(f) mod x^n。
 - `fps_sqrt_nonzero_const(f, n)`：要求 `f[0] != 0` 且常数项有平方根（无平方根 assert 失败）；返回 mod x^n 意义下的一个平方根。
 - `fps_pow(f, k, n)`：k 为非负整数（i64）；若首位非零项次数*k >= n 返回全 0 的 Poly(n)。
-- `fps_divmod(f, g)` / `fps_mod(f, g)`：g 非零；返回 {商, 余数} 或余数。
+- `fps_divmod(f, g)` / `fps_mod(f, g)`：g 非零；返回 {商， 余数} 或余数。
 - 所有函数的第二参数 `n` 是系数个数而不是最高次数；模数固定 `998244353`，任意模数不要改 `FPS_MOD`。
 
 **API / 入口函数（赛时只认这里列的名字）：**
@@ -3452,6 +3476,8 @@ Poly fps_mod(Poly f, const Poly& g) { return fps_divmod(std::move(f), g).second;
 
 **最小完整示例（先抄这一段就能跑）：**
 
+依赖：形式幂级数核心：`inv / ln / exp / sqrt / pow / divmod` 节的 Poly / FPS_MOD / fps_mul / fps_mod，抄板时一起抄上。
+
 ```cpp
 // 题目：求 f(x)=x^2+1 在 x=0,1,2 三点的值。
 MultipointEvaluation ev({0, 1, 2});          // 构造乘积树，点集内部自动取模
@@ -3523,6 +3549,8 @@ struct MultipointEvaluation {
 
 
 **最小完整示例（先抄这一段就能跑）：**
+
+依赖：积树：多点求值 节 与 形式幂级数核心：`inv / ln / exp / sqrt / pow / divmod` 节（MultipointEvaluation / fps_derivative / fps_powmod 等），抄板时一起抄上。
 
 ```cpp
 // 题目：过三点 (0,1)、(1,2)、(2,5) 还原多项式。
@@ -3674,6 +3702,8 @@ vector<i64> and_convolution(vector<i64> a, vector<i64> b, i64 mod) {
 
 **最小完整示例（先抄这一段就能跑）：**
 
+依赖：本册通用辅助函数 节的 mod_pow，抄板时一起抄上。
+
 ```cpp
 // 题目：a={1,2}、b={2,3}，求 XOR 卷积。
 vector<i64> c = xor_convolution({1, 2}, {2, 3}, 998244353); // c={8, 7}
@@ -3727,6 +3757,8 @@ vector<i64> xor_convolution(vector<i64> a, vector<i64> b, i64 mod) {
 
 
 **最小完整示例（先抄这一段就能跑）：**
+
+依赖：典题：标号图度数奇偶计数 节的 pow_mod_any，抄板时一起抄上。
 
 ```cpp
 // 题目：X∈[0,1]、Y∈[0,1] 独立均匀，求 X xor Y 的分布（概率模 MOD）。
@@ -3794,6 +3826,8 @@ vector<i64> xor_distribution_uniform_ranges(const vector<int>& upper) {
 
 
 **最小完整示例（先抄这一段就能跑）：**
+
+> 依赖：本册通用辅助函数（`mod_pow`），抄板时一起抄上。
 
 ```cpp
 // 题目：Fibonacci 前 6 项 0,1,1,2,3,5，求第 10 项（下标从 0 计）。
@@ -3880,6 +3914,8 @@ i64 linear_recurrence_nth(const vector<i64>& init, const vector<i64>& rec, i64 n
 
 
 **最小完整示例（先抄这一段就能跑）：**
+
+> 依赖：形式幂级数核心（`Poly` / `FPS_MOD` / `fps_mul` / `fps_mod` / `fps_powmod`），抄板时一起抄上。
 
 ```cpp
 // 题目：a_n = 2a_{n-1}，a_0=1，求 a_100（即 1/(1-2x) 的 [x^100]）。
@@ -4238,6 +4274,7 @@ vector<Hex> hex_ring(Hex c, i64 radius) {
 
 **最小完整示例（先抄这一段就能跑）：**
 > 题目：判断两条线段是否相交；求点 P 到线段 AB 的最短距离。
+> 依赖：点与向量基础（`Point` / `dot` / `cross` / `norm` / `dist` / `sgn` / `EPS`），抄板时一起抄上。
 ```cpp
 Point A{0,0}, B{2,2}, C{0,2}, D{2,0}, P{1,0};
 printf("%d\n", segment_intersect(A, B, C, D));         // 相交 = 1
@@ -4286,17 +4323,22 @@ double distance_point_to_segment(Point p, Point a, Point b) {
 
 
 **最小完整示例（先抄这一段就能跑）：**
-> 题目：求三角形面积，并判断点是否在三角形内部。
+
+题目：求三角形面积，并判断点是否在三角形内部。
+
+依赖：点与向量基础（`Point` / `cross` / `sgn`）+ 线段相交与点到线段距离（`on_segment`），抄板时一起抄上。
+
 ```cpp
 vector<Point> tri{{0,0},{2,0},{0,2}};
 printf("%.10f\n", polygon_area2(tri) / 2);  // 面积 = 2
-printf("%d\n", point_in_polygon({1,1}, tri)); // 内部 = 2
+printf("%d\n", point_in_polygon({1,0.5}, tri)); // 内部 = 2
 printf("%d\n", point_in_polygon({3,3}, tri)); // 外部 = 0
 ```
-> 样例输出：`2.0000000000`；`2`；`0`。
+
+样例输出：`2.0000000000`；`2`；`0`。
 
 **传参要求（照这个传不会错）：**
-- `polygon_area2(p)`：`p` 为按序顶点（`vector<Point>`，顺逆皆可）；返回 2 倍有向面积（`double`），真实面积取 `fabs(结果)/2`。
+- `polygon_area2(p)`：`p` 为按序顶点（`vector<Point>`，顺逆皆可）；返回 2 倍有向面积（`double`），真实面积取 `fabs（结果）/2`。
 - `point_in_polygon(q, poly)`：`q` 为查询点，`poly` 为按序顶点（顺逆皆可）；返回 `0`=外部、`1`=边界（含顶点与边上）、`2`=内部。
 
 ```cpp
@@ -4423,6 +4465,7 @@ vector<array<EarPoint, 3>> ear_clipping_triangulation(vector<EarPoint> poly) {
 
 **最小完整示例（先抄这一段就能跑）：**
 > 题目：给 4 个点求凸包，输出凸包点数。
+> 依赖：点与向量基础（`Point` / `cross` / `sgn`），抄板时一起抄上。
 ```cpp
 vector<Point> pts{{0,0},{1,0},{0,1},{1,1}};
 auto hull = convex_hull(pts);
@@ -4592,6 +4635,7 @@ vector<IPoint> minkowski_sum_convex(vector<IPoint> a, vector<IPoint> b) {
 
 **最小完整示例（先抄这一段就能跑）：**
 > 题目：求凸包上最远点对的距离（已先求好凸包）。
+> 依赖：点与向量基础（`Point` / `cross` / `norm2` / `sgn` / `EPS`），抄板时一起抄上。
 ```cpp
 vector<Point> p{{0,0},{4,0},{4,3}};
 printf("%.10f\n", sqrt(convex_diameter2(p)));  // 直径 = 5
@@ -4633,6 +4677,7 @@ double convex_diameter2(const vector<Point>& p) {
 
 **最小完整示例（先抄这一段就能跑）：**
 > 题目：求平面点集中最近点对的距离。
+> 依赖：点与向量基础（`Point` / `sgn` / `norm2`），抄板时一起抄上。
 ```cpp
 vector<Point> p{{0,0},{3,4},{1,0},{100,100}};
 printf("%.10f\n", sqrt(closest_pair(p)));  // 最近距离 = 1
@@ -4859,6 +4904,7 @@ struct KDTree2D {
 
 **最小完整示例（先抄这一段就能跑）：**
 > 题目：求直线与圆的交点个数。
+> 依赖：点与向量基础（`Point` / `dot` / `norm2` / `sgn` / `dist`），抄板时一起抄上。
 ```cpp
 Line L{{0, 0}, {1, 0}};        // 直线 y = 0
 Circle C{{0, 0}, 2};           // 圆心原点，半径 2
@@ -4905,6 +4951,7 @@ vector<Point> line_circle_intersection(Line line, Circle c) {
 
 **最小完整示例（先抄这一段就能跑）：**
 > 题目：(1,0) 绕原点逆时针转 90°；直线 (0,0)+t*(1,1) 与 (1,0)+s*(0,1) 求交点。
+> 依赖：点与向量基础（`Point` / `cross` / `sgn`），抄板时一起抄上。
 ```cpp
 Point a = rotate({1, 0}, acos(-1.0) / 2);        // (1,0) 逆时针转 90°，得 (0,1)
 Point out;                                        // 交点写进 out
@@ -5033,6 +5080,7 @@ double simulate_moving_walls(
 
 **最小完整示例（先抄这一段就能跑）：**
 > 题目：逆时针凸包 (0,0),(4,0),(4,3),(0,3)，查询 (1,1) 与 (5,2) 是否在凸包内。
+> 依赖：点与向量基础（`Point` / `cross` / `sgn`）+ 线段相交与点到线段距离（`on_segment`），抄板时一起抄上。
 ```cpp
 vector<Point> hull = {{0,0}, {4,0}, {4,3}, {0,3}}; // 逆时针、无重复点
 printf("%d %d\n",
@@ -5138,6 +5186,7 @@ i64 interior_lattice_points(const vector<pair<i64, i64>>& p) {
 
 **最小完整示例（先抄这一段就能跑）：**
 > 题目：圆 A 心 (0,0) 半径 2，圆 B 心 (3,0) 半径 2，求两圆交点。
+> 依赖：点与向量基础（`Point` / `dist` / `sgn`）+ 直线与圆交点（`Circle`），抄板时一起抄上。
 ```cpp
 vector<Point> res = circle_circle_intersection({{0,0}, 2}, {{3,0}, 2});
 printf("%zu %.1f %.1f\n", res.size(), res[0].x, res[0].y); // 交点 (1.5, ±1.32)

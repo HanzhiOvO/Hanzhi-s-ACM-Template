@@ -50,6 +50,9 @@
 题目：构造题输出 `n` 个数的排列，把程序生成的输出字符串交给 checker 逐条检查。
 
 ```cpp
+string out = "3 1 2";                            // 样例输入，抄题时换成你的输入
+int n = 3;                                       // 样例输入，抄题时换成你的输入
+int cnt = 3;                                     // 样例输入，抄题时换成你的输入
 LocalChecker ck(out);                    // 1. 用程序构造出的输出文本初始化
 for (int i = 0; i < n; ++i) {            // 2. 逐个读入并核对范围
     ck.read_int(1, n, "p[i]");           //    值必须在 [1, n]
@@ -138,6 +141,12 @@ struct LocalChecker {
 题目：构造 `<=100` 个三维点（坐标 `[-100,100]`），使每个点恰有 `n` 个距离约 1 的邻点且点距 `>=0.01`。
 
 ```cpp
+int n = 1;                                       // 样例输入，抄题时换成你的输入
+auto my_build = [](int n) -> vector<Point3D> {   // 样例输入，抄题时换成你的输入
+    vector<Point3D> p;
+    for (int i = 0; i <= n; ++i) p.push_back({(double)i, 0, 0});
+    return p;
+};
 vector<Point3D> points = my_build(n);           // 1. 自己的构造函数产出点集
 if (!check_absolute_space(points, n)) {         // 2. 本地校验
     /* 重新构造或换一组表 */
@@ -204,6 +213,7 @@ bool check_absolute_space(const vector<Point3D>& p, int need_degree) {
 题目：`n` 个候选人，给定 `m` 条“`a` 在多数票中排在 `b` 前”的约束，输出若干排列作为投票。
 
 ```cpp
+int n = 3;                                       // 样例输入，抄题时换成你的输入
 vector<pair<int,int>> wins = {{1, 3}, {3, 2}};   // 1. 收集约束：1 胜 3、3 胜 2
 auto votes = mcgarvey_votes(n, wins);            // 2. 生成 2*m 张票
 for (auto& v : votes) {                          // 3. 每行输出一个排列
@@ -261,7 +271,7 @@ vector<vector<int>> mcgarvey_votes(int n, const vector<pair<int, int>>& wins) {
 > - **本质**：处理小球/光线在网格中按方向运动，遇到 `/`、`\`、`#` 改变方向，并且可以付出代价删除镜子或改变格子的题。
 > - **接法**：把每个状态设为 `(r,c,dir)`；代价 0 的自然反射走队首，代价 1 的“删除镜子后直行”走队尾；最后取所有逃出边界的最小代价。
 > - **复杂度判定**：状态数 `4*n*m`，0-1 BFS 为 `O(nm)`。
-> - **维护的量**：`dist[r][c][d]`（状态 `(r,c,方向)` 的最短代价，0-1 BFS 的核心表）；`dr/dc`（四个方向的位移）。
+> - **维护的量**：`dist[r][c][d]`（状态 `(r,c,方向）` 的最短代价，0-1 BFS 的核心表）；`dr/dc`（四个方向的位移）。
 > - **警告**：状态必须包含方向；遇到边界通常直接逃出；遇到墙是反弹还是不能走，要按题面调整。若题目要求输出具体操作方案，需要在本模板基础上加前驱恢复。
 
 
@@ -270,6 +280,8 @@ vector<vector<int>> mcgarvey_votes(int n, const vector<pair<int, int>>& wins) {
 题目：`n*m` 网格含 `#`（墙、反弹）与 `/`、`\`（镜子），从 `(sr,sc)` 任意方向出发，求最少删几个镜子能逃出边界。
 
 ```cpp
+vector<string> grid = {"..", ".."};              // 样例输入，抄题时换成你的输入
+int sr = 0, sc = 0;                              // 样例输入，抄题时换成你的输入
 MirrorGrid01BFS solver(grid);                 // 1. 传入 vector<string> 网格
 int ans = solver.shortest_destroy_to_escape(sr, sc); // 2. 起点坐标（0-indexed）
 cout << (ans >= (int)1e9 ? -1 : ans) << '\n'; // 3. INF 表示逃不出去
@@ -452,6 +464,16 @@ pair<i64, i64> best_rectangle_block(i64 k, i64 max_side) {
 题目：构造题本地自检——随机生成小规模输入，构造方案后立刻用 checker 验证。
 
 ```cpp
+struct Case {                                    // 样例输入，抄题时换成你的输入
+    struct Output {
+        void debug_print(ostream& os) const { os << "out\n"; }
+    };
+    Output out;
+    static Case random(mt19937&) { return Case{}; }
+    Output solve() { return out; }
+    void debug_print(ostream& os) const { os << "in\n"; }
+};
+auto my_check = [](const Case&, const Case::Output&) { return true; }; // 样例输入，抄题时换成你的输入
 auto build = [&](mt19937& rng) { return Case::random(rng); }; // 1. 随机造小输入
 auto check = [&](Case in, Case::Output out) { return my_check(in, out); }; // 2. 校验
 stress_construct(1000, build, check);   // 3. 跑 1000 轮，失败即 assert
@@ -515,6 +537,8 @@ void stress_construct(int rounds, Build build_one_case, Check check_one_case) {
 题目：交互题每次输出 `? x y` 并读回答，最后输出 `! ans`，询问上限 100 次。
 
 ```cpp
+int x = 1, y = 2;                        // 样例输入，抄题时换成你的输入
+int ans = 42;                            // 样例输入，抄题时换成你的输入
 InteractiveIO io(100);               // 1. 传询问上限，超限自动 assert
 int resp = io.ask_int({x, y});       // 2. 输出 "? x y"（内部已 flush）并读回答
 io.answer(ans);                      // 3. 输出 "! ans" 并结束程序
@@ -699,6 +723,7 @@ vector<int> interactive_merge_sort(vector<int> a, Less less_than) {
 题目：交互回答可能随机出错，对同一问题重复问奇数遍取多数作为最终回答。
 
 ```cpp
+auto ask_q = []() { return 1; };                 // 样例输入，抄题时换成你的输入
 auto ask_once = [&]() { return ask_q() == 1 ? 1 : 0; };  // 1. 单次真实查询转 0/1
 int vote = majority_binary_query(ask_once, 3);  // 2. 重复 3 遍取 0/1 多数
 int val  = majority_value_query(ask_once, 5);   // 3. 或重复 5 遍取众数
@@ -952,6 +977,8 @@ int hamming74_decode(int code7) {
 题目：Alice 和 Bob 各有一个集合（元素可重复），只传摘要判断是否相同：
 
 ```cpp
+vector<unsigned long long> setA = {1, 2, 3};     // 样例输入，抄题时换成你的输入
+vector<unsigned long long> setB = {1, 2, 3};     // 样例输入，抄题时换成你的输入
 SetSketch a, b;
 for (auto v : setA) a.add(v);   // 1. 双方用同一个 splitmix64_hash 作为元素权
 for (auto v : setB) b.add(v);
@@ -1396,7 +1423,8 @@ using u128 = __uint128_t;
 ui64 isqrt_u128(u128 x) {
     ui64 lo = 0, hi = ULLONG_MAX;
     while (lo < hi) {
-        ui64 mid = lo + (hi - lo + 1) / 2;
+        // 上取中位数；用 u128 计算避免 hi - lo + 1 溢出（lo=0 时 2^64 会溢出成 0 导致死循环）。
+        ui64 mid = (ui64)(((u128)lo + hi + 1) >> 1);
         if ((u128)mid * mid <= x) lo = mid;
         else hi = mid - 1;
     }
@@ -1657,6 +1685,8 @@ vector<int> solve_directed_graph_game(const vector<vector<int>>& g) {
 题目：棋子在二分图上沿边移动并删掉刚离开的点，无路可走者输；判断从起点出发先手是否必胜。
 
 ```cpp
+int nL = 1, nR = 1, m = 1;             // 样例输入，抄题时换成你的输入
+int l = 0;                             // 样例输入，抄题时换成你的输入
 HopcroftKarpGame game(nL, nR);           // 左部 nL 个点、右部 nR 个点
 for (int i = 0; i < m; ++i) {
     int l, r; cin >> l >> r;
@@ -1787,7 +1817,10 @@ struct HopcroftKarpGame {
 
 题目：生成闭区间随机数，并原地打乱数组。
 
+依赖：A 章基础节（`using i64 = long long;` 等通用类型），抄板时一起抄上
+
 ```cpp
+vector<int> a = {3, 1, 4, 1, 5};                 // 样例输入，抄题时换成你的输入
 int x = rand_int(1, 6);                     // 1. [1,6] 闭区间随机整数，含两端
 i64 y = rand_ll(1, 1000000000000000000LL);  // 2. [1,1e18] 闭区间随机 i64
 shuffle(a.begin(), a.end(), rng);           // 3. 原地打乱数组，直接传全局 rng
@@ -1829,7 +1862,7 @@ i64 rand_ll(i64 l, i64 r) {
 题目：平面上 `n` 个点，求到它们欧氏距离和最小的点（输出坐标，允许近似）。直接抄下面的费马点写法：
 
 ```cpp
-vector<pair<double, double>> pts;  // 读入 n 个点的坐标
+vector<pair<double, double>> pts = {{0, 0}, {4, 0}, {0, 3}};  // 样例输入：三个点（抄题时换成你的输入）
 auto score = [&](const pair<double, double>& p) {
     double s = 0;
     for (auto [x, y] : pts) s += hypot(p.first - x, p.second - y);
@@ -1886,7 +1919,10 @@ State hill_climb(State start, Score score, Neighbor neighbor, int climb_steps = 
 
 题目：平面 `n` 个点，求到它们欧氏距离和最小的点（输出坐标，允许误差）。直接抄下面的费马点示例即可：
 
+依赖：A-A 节「通用头文件与主函数」（i64 别名），抄板时一起抄上。
+
 ```cpp
+int n = 3;                                // 样例输入，抄题时换成你的输入
 vector<pair<double, double>> pts;
 for (int i = 0; i < n; ++i) { double x, y; cin >> x >> y; pts.push_back({x, y}); }
 AnnealPoint ans = fer_mat_point_sa(pts);      // 1. 调用：返回近似最优坐标
@@ -2247,11 +2283,14 @@ int weekday(int y, int m, int d) {
 
 题目：数组去重后二分查找，求第一个 `>= 3` 的下标。
 
+依赖：随机数节（rng）与 A 章基础节（`using i64 = long long;` 等通用类型），抄板时一起抄上
+
 ```cpp
+int x = 2;                                  // 样例输入，抄题时换成你的输入
 vector<int> a = {3, 1, 2, 1, 3};                // 1. 原数组
 sort(a.begin(), a.end());
 a.erase(unique(a.begin(), a.end()), a.end());   // 2. 原地去重后 a = {1,2,3}
-bool ok = binary_search(a.begin(), a.end(), 2); // 3. 二分查找，找到返回 true
+bool ok_found = binary_search(a.begin(), a.end(), 2); // 3. 二分查找，找到返回 true
 int pos = lower_bound(a.begin(), a.end(), 3) - a.begin();  // 4. 第一个 >=3 的 0-based 下标
 ```
 
@@ -2985,7 +3024,7 @@ printf("%lld\n", sp.query(0, 2)); // 绕回普通边 5+5=10
 
 **传参要求（照这个传不会错）：**
 
-- `init(n_, normal_w_, all_edges, special_id_weight)`：`n_` 点数；`normal_w_` 普通边权；`all_edges` 全部边 `{u,v}` 0-indexed；`special_id_weight` 为 `(边 id, 特殊权)` 列表，特殊权 >=1（0 表示普通边）。
+- `init(n_, normal_w_, all_edges, special_id_weight)`：`n_` 点数；`normal_w_` 普通边权；`all_edges` 全部边 `{u,v}` 0-indexed；`special_id_weight` 为 `（边 id, 特殊权）` 列表，特殊权 >=1（0 表示普通边）。
 - `update_special_edge(id, w)`：把 id 号边（须为特殊边）权改成 `w`（>=1）。
 - `query(s, t)`：`s,t` 0-indexed 点对。返回：最短路（`long long`，不可达为 `4e18`）。
 
@@ -3387,6 +3426,8 @@ printf("%lld %lld\n", mn, mx);
 **最小完整示例（先抄这一段就能跑）：**
 题目：`n` 个数、`q` 次全体按位运算，每次询问所有数二进制里连续 1 段的段数。
 ```cpp
+vector<int> a = {3, 5};                          // 样例输入，抄题时换成你的输入
+int x = 2;                                       // 样例输入，抄题时换成你的输入
 BitRunCounter brc;
 brc.init(a);                    // a 为 vector<int>，a[i] 是第 i 个数，下标 0..n-1
 brc.apply_all(1, x);            // 全体 &= x；type=1/2/3 分别对应 &、|、^
@@ -3469,6 +3510,7 @@ struct BitRunCounter {
 **最小完整示例（先抄这一段就能跑）：**
 题目：`m` 次抽奖、每次以 `a/b` 概率赢，全程余额不为负且最终恰好为 0 的合法序列概率。
 ```cpp
+int n = 2, m = 4, c = 1, a = 1, b = 2;           // 样例输入，抄题时换成你的输入
 Comb998 comb;
 comb.init(m);                                // 先预处理到最大步数 m 的组合数
 int ans = bottle_raney_answer(n, m, c, a, b, comb);
@@ -3645,6 +3687,8 @@ long long count_minesweeper_strip(const string& bottom) {
 **最小完整示例（先抄这一段就能跑）：**
 题目：1-indexed 矩阵，统计每个格子被"同值上/下两部分的出现位置"共同覆盖的次数。
 ```cpp
+vector<vector<int>> a = {{0, 0, 0}, {0, 1, 1}, {0, 1, 1}};  // 样例输入，抄题时换成你的输入
+int i = 1, j = 1;                                          // 样例输入，抄题时换成你的输入
 vector<vector<int>> cover = mark_same_value_rectangles(a);
 // a 是 (n+1)x(m+1)，有效数据在 a[1..n][1..m]；cover[i][j] 为 (i,j) 的覆盖次数
 if (cover[i][j] > 0) { /* (i,j) 至少被一个值覆盖 */ }
@@ -3800,6 +3844,8 @@ string turn_direction(PointLL a, PointLL b, PointLL c) {
 **最小完整示例（先抄这一段就能跑）：**
 题目：网格每次只能走到严格更高的相邻格，不能走者输；输出每个格的胜负态并回答起点询问。
 ```cpp
+vector<vector<int>> h = {{0, 0, 0}, {0, 2, 1}, {0, 1, 0}};  // 样例输入，抄题时换成你的输入
+int sx = 1, sy = 1;                                         // 样例输入，抄题时换成你的输入
 vector<vector<int>> win = increasing_grid_game(h);
 // h 是 (n+1)x(m+1) 的 1-indexed 高度矩阵，win[i][j] 是 (i,j) 的胜负态
 if (win[sx][sy]) puts("First"); else puts("Second");
@@ -3910,6 +3956,7 @@ vector<vector<int>> increasing_grid_game(const vector<vector<int>>& h) {
 **最小完整示例（先抄这一段就能跑）：**
 题目：输入可能超 `long long` 的整数 `x`，输出一个 16×16 矩阵使行列式等于 `x`（元素范围 `[-16,16]`）。
 ```cpp
+string s = "-123";                              // 样例输入，抄题时换成你的输入
 i128 x = read_i128_string(s);          // s 为读入的十进制串，支持负号
 auto mat = construct_det_16(x);        // mat 是 16x16，元素在 [-16,16]
 printf("16\n");                        // 先输出 16，再逐行输出 mat 的每个元素
@@ -4005,6 +4052,7 @@ vector<vector<int>> construct_det_16(i128 x) {
 **最小完整示例（先抄这一段就能跑）：**
 题目：给 `p`，构造 `x1,x2,q` 使 `x1^2 ≡ p (mod q)` 且 `x2^2 ≡ q (mod p)`。
 ```cpp
+int p = 5;                                         // 样例输入，抄题时换成你的输入
 auto [x1, x2, q] = construct_quadratic_residue(p);  // p 为 int，结果自动满足 1<=x1<q、1<=x2<p
 printf("%lld %lld %lld\n", x1, x2, q);
 ```
@@ -4171,6 +4219,10 @@ vector<int> game_lexicographically_min_rotation_result(int n) {
 
 ```cpp
 // 题目：强连通带权有向图，每次把第 id 条边临时降权，求 max dis(i,j)/dis(j,i)。
+int n = 3;                                                       // 样例输入，抄题时换成你的输入
+vector<DPRS::Edge> input_edges = {{0, 0, 0}, {1, 2, 10}, {2, 3, 1}, {3, 1, 1}};  // 样例输入，抄题时换成你的输入
+int id = 1;                                                      // 样例输入，抄题时换成你的输入
+long long new_w = 3;                                             // 样例输入，抄题时换成你的输入
 DPRS solver;                                      // 先构造结构
 solver.init(n, input_edges);                      // 顶点 1..n，边表从下标 1 开始
 long double val = solver.query_decrease_edge(id, new_w);  // 第 id 条边降为 new_w 后查询
@@ -5676,7 +5728,11 @@ i128 max_total_query_sum_after_rearrange(vector<i64> a, const vector<pair<int, i
 
 题目：`n` 个哨岗坐标，分给两方，同组欧氏距离必须 `> d`，问能否分完（`MC0421 分配哨岗`）：
 
+依赖：A-A 节「通用头文件与主函数」（i64 / i128 别名），抄板时一起抄上。
+
 ```cpp
+int n = 3;                                   // 样例输入，抄题时换成你的输入
+i64 d = 5;                                   // 样例输入，抄题时换成你的输入
 vector<MatijiPoint> pts;
 for (int i = 0; i < n; ++i) { i64 x, y; cin >> x >> y; pts.push_back({x, y}); }
 vector<int> color;
