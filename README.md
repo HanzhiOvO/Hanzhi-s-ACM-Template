@@ -81,6 +81,16 @@ python build.py
 - [x] 已验证正确：Dinic（200 组 vs 暴力割）、NTT/三模 NTT（50 组 + 1e5 长度）、BM+Kitamasa、FHQ Treap、exLucas（合数模）
 - 经验：**只编译不运行抓不到运行时 bug**，真题验证发现 4 个真 bug
 
+## 真题验证修复（第二轮，2025.8 续）
+
+- [x] **FHQTreap 哨兵 sz/cnt 未清零**（02.24）：0 号哨兵 Node 默认 sz=1，子树大小全部多算——加构造函数清零，200 组 vs multiset 验证
+- [x] **FHQSeq 哨兵 sz 未清零**（02.25）：同上——200 组 vs vector 验证
+- [x] **MCMF 负费用卡死**（04.16）：Dijkstra+势能版缺 Bellman-Ford 势能初始化，负费用边时 reduced cost 为负——已修
+- [x] **MCMF cost 公式错**（04.16）：`cost += f*h[t]` 应为 `cost += f*(h[t]-h[s])`（BF 初始化后 h[s]≠0）——200 组含负费用 vs 朴素 SPFA 验证
+- [x] 已验证正确：gauss_real（100 组残差）、det_mod（100 组 vs 暴力全排列）、convex_hull（100 组点集）
+- [x] 回归测试归档：`tests/regression.cpp`（FHQ/MCMF/高斯/行列式/凸包一键重跑）
+- 教训：FHQ 家族只编译不运行抓不到哨兵 bug；MCMF 负费用不跑必炸
+
 ## 已完成（第二轮补全）
 
 - 新增：Splay、Link-Cut Tree、猫树、珂朵莉树 ODT、带花树、同余最短路、三元环计数、最大团、立体几何、exLucas、Min_25 筛、Bell 数、错排、LTE/连分数速查、广义 SAM、LGV 引理、Prufer 编码、FPS 全套(poly_inv/ln/exp)、Bostan-Mori
