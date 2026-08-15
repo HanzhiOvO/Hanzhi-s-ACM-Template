@@ -96,3 +96,11 @@ python build.py
 
 - python verify.py：提取全部代码块 + 骨架 + clang++ 编译验证（当前 0 语法错误）
 - python build.py：合并章节 → 双栏 PDF
+
+---
+
+## 致谢与开源协议
+
+本仓库中的知识性内容（包括但不限于算法讲解、思路分析等）参考或引用了 [OI-wiki](https://github.com/OI-wiki/OI-wiki) 项目，在此表示诚挚的感谢。
+
+本仓库采用 **CC BY-SA 4.0** 许可协议（见 LICENSE 文件）。
