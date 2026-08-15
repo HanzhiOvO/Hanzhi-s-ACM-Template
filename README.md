@@ -91,6 +91,14 @@ python build.py
 - [x] 回归测试归档：`tests/regression.cpp`（FHQ/MCMF/高斯/行列式/凸包一键重跑）
 - 教训：FHQ 家族只编译不运行抓不到哨兵 bug；MCMF 负费用不跑必炸
 
+## 缺口补齐（2025.8，四个 TODO 全部完成）
+
+- [x] **poly_sqrt / poly_pow**（07.15）：完整牛顿迭代实现（a[0]==0 提因子版）——顺带修复原模板 **poly_inv 的 NTT 长度 bug**（用 len 应 2*len，循环卷积环绕导致 inv/ln/exp 全错）与 **poly_sqrt res 未 resize**（越界写堆损坏）；100 组随机 + n=4096 烟雾验证
+- [x] **多点求值 / 快速插值**（07.8）：poly_mod（反转+逆）+ 积树 + 分治插值完整实现；100 组 vs 直接代入/朴素长除验证
+- [x] **HLPP 最高标号预流推进**（04.18）：0-based 完整实现；300 组稠密小图 + 30 组 n=50 vs Dinic 验证
+- [x] **动态点分治**（03.20）：点开关灯查最近距离完整实现（LCA 内联）；100 组随机树 x 300 操作 vs 暴力验证（修复 paths 重复 push bug）
+- 回归测试归档：`tests/test_poly.cpp`、`tests/test_mpe.cpp`、`tests/test_hlpp.cpp`、`tests/test_dc.cpp`
+
 ## 已完成（第二轮补全）
 
 - 新增：Splay、Link-Cut Tree、猫树、珂朵莉树 ODT、带花树、同余最短路、三元环计数、最大团、立体几何、exLucas、Min_25 筛、Bell 数、错排、LTE/连分数速查、广义 SAM、LGV 引理、Prufer 编码、FPS 全套(poly_inv/ln/exp)、Bostan-Mori
