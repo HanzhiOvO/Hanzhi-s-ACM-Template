@@ -91,6 +91,12 @@ python build.py
 - [x] 回归测试归档：`tests/regression.cpp`（FHQ/MCMF/高斯/行列式/凸包一键重跑）
 - 教训：FHQ 家族只编译不运行抓不到哨兵 bug；MCMF 负费用不跑必炸
 
+## 防爆 int64 快速幂（2025.8）
+
+- [x] **01.3 新增 `mul_mod_safe` / `mod_pow_safe`**：龟速乘版，完全不依赖 `__int128`（MSVC 无此类型、Windows clang 链接缺 `__modti3` 符号），条件减法保证 mod 接近 9e18 也不溢出
+- [x] 选型说明：Linux g++ 判题机用原 `mod_pow`（快），无 `__int128` 平台用 `_safe` 版
+- 验证：2000 组小模数对拍 + 300 组 ~9e18 大模数 vs Python pow + 边界/极限用例；回归测试 `tests/test_pow_safe.cpp`
+
 ## 缺口补齐（2025.8，四个 TODO 全部完成）
 
 - [x] **poly_sqrt / poly_pow**（07.15）：完整牛顿迭代实现（a[0]==0 提因子版）——顺带修复原模板 **poly_inv 的 NTT 长度 bug**（用 len 应 2*len，循环卷积环绕导致 inv/ln/exp 全错）与 **poly_sqrt res 未 resize**（越界写堆损坏）；100 组随机 + n=4096 烟雾验证

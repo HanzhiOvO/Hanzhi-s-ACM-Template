@@ -334,6 +334,7 @@ def parse_table(block_lines):
         for c in r + [''] * (maxc - len(r)):
             rr.append(Paragraph(inline(c), styles['tbl']))
         data.append(rr)
+    # 列宽固定等分（保持稳定排版；长 cell 靠 Paragraph 空格断行）
     t = Table(data, colWidths=[COL_W / maxc] * maxc, repeatRows=1, hAlign='LEFT')
     cmds = [('GRID', (0,0), (-1,-1), 0.25, colors.HexColor('#D7DEE8')),
             ('VALIGN', (0,0), (-1,-1), 'TOP'),
